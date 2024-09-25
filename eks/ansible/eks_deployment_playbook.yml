@@ -1,0 +1,66 @@
+---
+- name: Deploy Application on EKS
+  hosts: localhost
+  gather_facts: false
+  vars:
+    namespace_name: "game-2048"  
+    ingress_name: "demo-local-tls"
+    tls_cert_file: "./demo.local.crt"  
+    tls_key_file: "./demo.local.key"    
+
+  tasks:
+    - name: Ensure required Python packages are installed
+      pip:
+        name:
+          - boto3
+          - botocore
+          - kubernetes
+        state: present
+        extra_args: "--user --break-system-packages"
+
+    - name: Create Namespace from namespace.yaml
+      k8s:
+        definition: "{{ lookup('file', 'namespace.yaml') }}"
+        state: present
+
+    - name: Apply Deployment
+      k8s:
+        definition: "{{ lookup('file', 'deployment.yaml') }}"
+        state: present
+        namespace: "{{ namespace_name }}"
+
+    - name: Apply Service
+      k8s:
+        definition: "{{ lookup('file', 'service.yaml') }}"
+        state: present
+        namespace: "{{ namespace_name }}"
+
+    - name: Generate Self-Signed Certificate
+      command: >
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048
+        -keyout demo.local.key -out demo.local.crt
+        -subj "/CN=demo.local"
+      args:
+        chdir: "{{ playbook_dir }}"  
+
+    - name: Create TLS Secret
+      k8s:
+        name: "{{ ingress_name }}"
+        namespace: "{{ namespace_name }}"
+        definition: 
+          apiVersion: v1
+          kind: Secret
+          type: kubernetes.io/tls
+          metadata:
+            name: "{{ ingress_name }}"
+            namespace: "{{ namespace_name }}"
+          data:
+            tls.crt: "{{ lookup('file', tls_cert_file) | b64encode }}"
+            tls.key: "{{ lookup('file', tls_key_file) | b64encode }}"
+
+    - name: Apply Ingress
+      k8s:
+        definition: "{{ lookup('file', 'ingress.yaml') }}"
+        state: present
+        namespace: "{{ namespace_name }}"
+
