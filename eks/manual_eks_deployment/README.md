@@ -80,3 +80,6 @@ We will get 2 ips mark then like follow in the /etc/host file in the local syste
 
 After this if we try to acceess the url https://demo.local we will get the msg that it is insecure still proceed then
 we can access the application
+
+![image](https://github.com/user-attachments/assets/f6fd9f7e-1ab0-4ae0-8967-1493b040f26a)
+
