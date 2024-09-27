@@ -10,7 +10,9 @@ Then update the kubeconfig to connect to the cluster using command line
 Create the alias so that we dont have to use kubectl always by command: alias k=kubectl
 
 k apply -f namespace.yaml
+
 k apply -f deployment.yaml
+
 k apply -f service.yaml
 
 Now if see our svc by then our service is nodeport mode means within cluster we can access the application but from outside we cannot
