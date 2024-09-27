@@ -10,7 +10,7 @@ spec:
   tls:
     - hosts:
         - demo.local
-      secretName: demo-local-tls  # Ensure this matches the secret you created
+      secretName: demo-local-tls  
   rules:
     - host: demo.local
       http:
