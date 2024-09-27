@@ -39,6 +39,7 @@ kubectl get service -n nginx-ingress-sample
 EXTERNAL_IP=your-nginx-controller-external-ip
 
 After this our load balancer controller has been deployed to check:
+
 k get po -n nginx-ingress-sample
 
 All the pods should be in running state
@@ -46,6 +47,7 @@ All the pods should be in running state
 ##############################################
 
 Now we need to create the self signed certificate and attach it so that we can access our domain using https:
+
 Follow following steps to achieve that,
 sudo apt-get install openssl
 
@@ -54,16 +56,22 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout demo.local.key \
     -out demo.local.crt \
     -subj "/CN=demo.local"
-This command will the 
-demo.local.key: This is the private key.
+
+This command will create following keys:
+
+demo.local.key: This is the private key
+
 demo.local.crt: This is the self-signed certificate.
 
 After this create the secret :
+
 kubectl create secret tls demo-local-tls \
     --cert=demo.local.crt \
     --key=demo.local.key \
     -n game-2048
+
 # Then Apply the ingress file
+
 k apply -f ingress.yaml
 
 Now we we see our ingress resource by command:
@@ -76,7 +84,9 @@ Then run following command:
 nslookup a0c6bf6e9752845c48eb0b99060bd0f8-1831895503.ap-south-1.elb.amazonaws.com
 
 We will get 2 ips mark then like follow in the /etc/host file in the local system
+
 3.7.192.252 demo.local
+
 52.66.75.97 demo.local
 
 After this if we try to acceess the url https://demo.local we will get the msg that it is insecure still proceed then
