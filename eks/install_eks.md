@@ -24,7 +24,7 @@ sudo ./aws/install
 
 EKS:
 
-eksctl create cluster --name demo-cluster --region ap-south-1 --fargate
+eksctl create cluster --name demo-cluster-1 --region ap-south-1 
 
 
 
