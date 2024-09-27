@@ -22,6 +22,7 @@ But as we have deployed the ingress but it wont create the load balancer because
 # Now create the load balancer controller using following command:
 
 But first we need to associate iam oidc provider
+
 eksctl utils associate-iam-oidc-provider --cluster demo-cluster --approve
 
 Run following commands to install the nginx ingress controller:
