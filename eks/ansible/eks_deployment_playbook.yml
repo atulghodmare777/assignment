@@ -6,7 +6,8 @@
     namespace_name: "game-2048"  
     ingress_name: "demo-local-tls"
     tls_cert_file: "./demo.local.crt"  
-    tls_key_file: "./demo.local.key"    
+    tls_key_file: "./demo.local.key"   
+    kubeconfig_path: "~/.kube/config" 
 
   tasks:
     - name: Ensure required Python packages are installed
@@ -22,18 +23,21 @@
       k8s:
         definition: "{{ lookup('file', 'namespace.yaml') }}"
         state: present
+        kubeconfig: "{{ kubeconfig_path }}"
 
     - name: Apply Deployment
       k8s:
         definition: "{{ lookup('file', 'deployment.yaml') }}"
         state: present
         namespace: "{{ namespace_name }}"
+        kubeconfig: "{{ kubeconfig_path }}"
 
     - name: Apply Service
       k8s:
         definition: "{{ lookup('file', 'service.yaml') }}"
         state: present
         namespace: "{{ namespace_name }}"
+        kubeconfig: "{{ kubeconfig_path }}"
 
     - name: Generate Self-Signed Certificate
       command: >
@@ -57,10 +61,12 @@
           data:
             tls.crt: "{{ lookup('file', tls_cert_file) | b64encode }}"
             tls.key: "{{ lookup('file', tls_key_file) | b64encode }}"
+        kubeconfig: "{{ kubeconfig_path }}"
 
     - name: Apply Ingress
       k8s:
         definition: "{{ lookup('file', 'ingress.yaml') }}"
         state: present
         namespace: "{{ namespace_name }}"
+        kubeconfig: "{{ kubeconfig_path }}"
 
